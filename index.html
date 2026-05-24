@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>菜篮子 — 卡通买菜小程序</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --pink: #FF6B8A;
+  --green: #5CB85C;
+  --yellow: #FFB347;
+  --orange: #FF7B42;
+  --blue: #5BC0DE;
+  --purple: #B07CD8;
+  --bg: #FFF8F0;
+  --card: #FFFFFF;
+  --text: #4A3728;
+  --sub: #8B7355;
+  --border: #E8D5C4;
+}
+
+body {
+  font-family: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 80px;
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(circle at 10% 20%, rgba(255,179,71,0.08) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(255,107,138,0.06) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(91,192,222,0.05) 0%, transparent 50%);
+}
+
+/* ============ HEADER ============ */
+.header {
+  background: linear-gradient(135deg, #FF7B42, #FF6B8A, #FFB347);
+  background-size: 200% 200%;
+  animation: headerShimmer 8s ease-in-out infinite;
+  padding: 20px 16px 24px;
+  text-align: center;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 4px 20px rgba(255,107,138,0.25);
+  border-radius: 0 0 28px 28px;
+}
+
+@keyframes headerShimmer {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.header h1 {
+  font-size: 1.6rem;
+  letter-spacing: 0.04em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.header h1 .bounce {
+  display: inline-block;
+  animation: vegBounce 1s ease-in-out infinite;
+}
+.header h1 .bounce:nth-child(2) { animation-delay: 0.15s; }
+.header h1 .bounce:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes vegBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.cart-badge {
+  position: fixed;
+  top: 14px;
+  right: 16px;
+  z-index: 60;
+  background: #fff;
+  color: var(--pink);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.15);
+  transition: transform 0.2s;
+  cursor: pointer;
+}
+
+.cart-badge.pop { animation: popBadge 0.4s ease-out; }
+@keyframes popBadge {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+/* ============ CATEGORY TABS (inside veg page) ============ */
+.cat-tabs {
+  display: flex;
+  gap: 8px;
+  padding: 14px 16px 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex-wrap: nowrap;
+}
+.cat-tabs::-webkit-scrollbar { display: none; }
+
+.cat-tab {
+  flex-shrink: 0;
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: 2px solid var(--border);
+  background: #fff;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--sub);
+  cursor: pointer;
+  transition: all 0.25s;
+  white-space: nowrap;
+}
+.cat-tab.active {
+  background: var(--green);
+  color: #fff;
+  border-color: var(--green);
+  box-shadow: 0 3px 12px rgba(92,184,92,0.25);
+  transform: translateY(-2px);
+}
+
+/* ============ VEG GRID ============ */
+.veg-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 12px 16px 20px;
+}
+
+.veg-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 16px 10px 14px;
+  text-align: center;
+  border: 2px solid #F5EDE5;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  position: relative;
+  overflow: hidden;
+}
+.veg-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  border-color: var(--green);
+}
+.veg-card:active {
+  transform: scale(0.95);
+}
+
+.veg-emoji {
+  font-size: 2.8rem;
+  display: block;
+  margin-bottom: 6px;
+  animation: floatItem 3s ease-in-out infinite;
+}
+.veg-card:nth-child(odd) .veg-emoji { animation-delay: 0s; }
+.veg-card:nth-child(even) .veg-emoji { animation-delay: 0.5s; }
+
+@keyframes floatItem {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-4px) rotate(-3deg); }
+  75% { transform: translateY(-2px) rotate(3deg); }
+}
+
+.veg-name {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.veg-price {
+  font-size: 0.72rem;
+  color: var(--orange);
+  font-weight: 600;
+}
+
+.veg-add {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--green);
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 32px;
+  margin-top: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 3px 8px rgba(92,184,92,0.3);
+}
+.veg-add:hover { background: #4CA84C; transform: scale(1.1); }
+.veg-add:active { transform: scale(0.9); }
+
+.veg-qty {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: var(--pink);
+  color: #fff;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: popBadge 0.3s;
+}
+
+/* ============ MENU SECTION ============ */
+.menu-list {
+  padding: 12px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.menu-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px 16px;
+  border: 2px solid #F5EDE5;
+  transition: all 0.25s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.menu-card:hover {
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  border-color: var(--orange);
+}
+.menu-card:active { transform: scale(0.98); }
+
+.menu-card::after {
+  content: '';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: rgba(255,179,71,0.08);
+  pointer-events: none;
+}
+
+.menu-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.menu-icon {
+  font-size: 2.4rem;
+}
+.menu-title { font-size: 1.05rem; font-weight: 700; }
+.menu-tag {
+  font-size: 0.68rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #FFF0E6;
+  color: var(--orange);
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.menu-ingredients {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.menu-ingredient {
+  font-size: 0.7rem;
+  padding: 3px 10px;
+  border-radius: 12px;
+  background: #F0F9F0;
+  color: var(--green);
+  font-weight: 500;
+}
+
+.menu-desc {
+  font-size: 0.76rem;
+  color: var(--sub);
+  line-height: 1.5;
+}
+
+.menu-add-all {
+  margin-top: 8px;
+  padding: 6px 16px;
+  border-radius: 16px;
+  border: 2px solid var(--green);
+  background: #fff;
+  color: var(--green);
+  font-weight: 700;
+  font-size: 0.76rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.menu-add-all:hover {
+  background: var(--green);
+  color: #fff;
+}
+
+/* ============ CART SECTION ============ */
+.cart-list {
+  padding: 12px 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cart-item {
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 2px solid #F5EDE5;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.cart-item-emoji { font-size: 2rem; }
+.cart-item-info { flex: 1; }
+.cart-item-name { font-weight: 700; font-size: 0.9rem; }
+.cart-item-price { font-size: 0.72rem; color: var(--sub); }
+
+.cart-qty-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cart-qty-btn {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  background: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.cart-qty-btn:hover { border-color: var(--pink); color: var(--pink); }
+.cart-qty-btn:active { transform: scale(0.9); }
+
+.cart-qty-num {
+  font-size: 0.95rem;
+  font-weight: 700;
+  min-width: 20px;
+  text-align: center;
+}
+
+.cart-item-del {
+  color: #ccc;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: color 0.2s;
+}
+.cart-item-del:hover { color: var(--pink); }
+
+/* ============ CART FOOTER ============ */
+.cart-footer {
+  position: fixed;
+  bottom: 70px;
+  left: 16px;
+  right: 16px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 -2px 16px rgba(0,0,0,0.06);
+  border: 2px solid #F5EDE5;
+}
+
+.cart-total { font-weight: 700; font-size: 0.95rem; }
+.cart-total span { color: var(--pink); font-size: 1.1rem; }
+
+.cart-clear {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: none;
+  background: #FFF0F0;
+  color: var(--pink);
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.78rem;
+  transition: all 0.2s;
+}
+.cart-clear:hover { background: var(--pink); color: #fff; }
+
+/* ============ BOTTOM NAV ============ */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  display: flex;
+  border-top: 2px solid #F5EDE5;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.04);
+  z-index: 50;
+  border-radius: 20px 20px 0 0;
+}
+
+.nav-item {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--sub);
+  position: relative;
+}
+
+.nav-item.active {
+  color: var(--orange);
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 30%;
+  right: 30%;
+  height: 3px;
+  background: var(--orange);
+  border-radius: 0 0 3px 3px;
+}
+
+.nav-icon { font-size: 1.5rem; display: block; }
+.nav-label { font-size: 0.7rem; font-weight: 600; margin-top: 2px; }
+
+.nav-item .mini-badge {
+  position: absolute;
+  top: 4px;
+  right: 50%;
+  transform: translateX(18px);
+  background: var(--pink);
+  color: #fff;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 0.65rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ============ EMPTY STATE ============ */
+.empty {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--sub);
+}
+.empty-icon { font-size: 4rem; display: block; margin-bottom: 12px; }
+.empty-text { font-size: 0.95rem; }
+
+/* ============ PAGE CONTAINER ============ */
+.page { display: none; }
+.page.active { display: block; animation: fadePage 0.3s; }
+@keyframes fadePage { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ============ RESPONSIVE ============ */
+@media (min-width: 768px) {
+  .veg-grid { grid-template-columns: repeat(4, 1fr); max-width: 900px; margin: 0 auto; }
+  .menu-list { max-width: 700px; margin: 0 auto; }
+  .cart-list { max-width: 700px; margin: 0 auto; }
+  .cart-footer { max-width: 700px; left: 50%; transform: translateX(-50%); }
+}
+
+@media (max-width: 380px) {
+  .veg-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; padding: 8px; }
+  .veg-card { padding: 12px 6px 10px; }
+  .veg-emoji { font-size: 2.2rem; }
+  .cat-tab { padding: 6px 12px; font-size: 0.74rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <h1>
+    <span class="bounce">🥬</span>
+    <span class="bounce">菜篮子</span>
+    <span class="bounce">🛒</span>
+  </h1>
+</div>
+
+<!-- Cart Badge -->
+<div class="cart-badge" id="cartBadge" onclick="switchTab('cart')" title="购物车">0</div>
+
+<!-- ============ PAGE 1: SHOP ============ -->
+<div class="page active" id="page-shop">
+  <div class="cat-tabs" id="catTabs"></div>
+  <div class="veg-grid" id="vegGrid"></div>
+</div>
+
+<!-- ============ PAGE 2: MENUS ============ -->
+<div class="page" id="page-menu">
+  <div class="menu-list" id="menuList"></div>
+</div>
+
+<!-- ============ PAGE 3: CART ============ -->
+<div class="page" id="page-cart">
+  <div class="cart-list" id="cartList"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-total">合计 <span id="cartTotalPrice">¥0</span></div>
+    <button class="cart-clear" onclick="clearCart()">🗑 清空</button>
+  </div>
+  <div class="empty" id="cartEmpty">
+    <span class="empty-icon">🛒</span>
+    <p class="empty-text">购物车空空如也~<br>去挑点好吃的吧！</p>
+  </div>
+</div>
+
+<!-- Bottom Nav -->
+<div class="bottom-nav">
+  <div class="nav-item active" id="nav-shop" onclick="switchTab('shop')">
+    <span class="nav-icon">🥬</span>
+    <span class="nav-label">买菜</span>
+  </div>
+  <div class="nav-item" id="nav-menu" onclick="switchTab('menu')">
+    <span class="nav-icon">🍳</span>
+    <span class="nav-label">推荐菜单</span>
+  </div>
+  <div class="nav-item" id="nav-cart" onclick="switchTab('cart')">
+    <span class="nav-icon">🛒</span>
+    <span class="nav-label">购物车</span>
+    <span class="mini-badge" id="navCartBadge" style="display:none">0</span>
+  </div>
+</div>
+
+<script>
+// ============ DATA ============
+const categories = [
+  { id: 'leaf', name: '🥬 叶菜', emoji: '🥬' },
+  { id: 'gourd', name: '🍅 瓜果', emoji: '🍅' },
+  { id: 'root', name: '🥔 根茎', emoji: '🥔' },
+  { id: 'mush', name: '🍄 菌菇', emoji: '🍄' },
+  { id: 'soy', name: '🫘 豆制品', emoji: '🫘' },
+  { id: 'meat', name: '🥩 肉蛋', emoji: '🥩' },
+];
+
+const vegetables = [
+  // leaf
+  { id: 'cabbage', name: '大白菜', price: 2.5, cat: 'leaf', emoji: '🥬' },
+  { id: 'spinach', name: '菠菜', price: 4.0, cat: 'leaf', emoji: '🌿' },
+  { id: 'lettuce', name: '生菜', price: 3.5, cat: 'leaf', emoji: '🥗' },
+  { id: 'celery', name: '芹菜', price: 3.0, cat: 'leaf', emoji: '🌱' },
+  { id: 'chives', name: '韭菜', price: 3.5, cat: 'leaf', emoji: '🌾' },
+  { id: 'water-spinach', name: '空心菜', price: 3.0, cat: 'leaf', emoji: '🥬' },
+  // gourd
+  { id: 'tomato', name: '西红柿', price: 4.5, cat: 'gourd', emoji: '🍅' },
+  { id: 'cucumber', name: '黄瓜', price: 3.0, cat: 'gourd', emoji: '🥒' },
+  { id: 'eggplant', name: '茄子', price: 4.0, cat: 'gourd', emoji: '🍆' },
+  { id: 'green-pepper', name: '青椒', price: 5.0, cat: 'gourd', emoji: '🫑' },
+  { id: 'pumpkin', name: '南瓜', price: 2.5, cat: 'gourd', emoji: '🎃' },
+  { id: 'winter-melon', name: '冬瓜', price: 2.0, cat: 'gourd', emoji: '🍈' },
+  // root
+  { id: 'potato', name: '土豆', price: 2.5, cat: 'root', emoji: '🥔' },
+  { id: 'carrot', name: '胡萝卜', price: 3.0, cat: 'root', emoji: '🥕' },
+  { id: 'radish', name: '白萝卜', price: 2.0, cat: 'root', emoji: '🤍' },
+  { id: 'yam', name: '山药', price: 6.0, cat: 'root', emoji: '🟤' },
+  { id: 'onion', name: '洋葱', price: 3.5, cat: 'root', emoji: '🧅' },
+  { id: 'sweet-potato', name: '红薯', price: 3.0, cat: 'root', emoji: '🍠' },
+  // mush
+  { id: 'shiitake', name: '香菇', price: 8.0, cat: 'mush', emoji: '🍄' },
+  { id: 'enoki', name: '金针菇', price: 5.0, cat: 'mush', emoji: '🍄‍🟫' },
+  { id: 'king-mush', name: '杏鲍菇', price: 7.0, cat: 'mush', emoji: '🍄' },
+  { id: 'wood-ear', name: '木耳', price: 6.0, cat: 'mush', emoji: '🪵' },
+  { id: 'oyster-mush', name: '平菇', price: 5.5, cat: 'mush', emoji: '🍄' },
+  // soy
+  { id: 'tofu', name: '豆腐', price: 2.0, cat: 'soy', emoji: '🧈' },
+  { id: 'tofu-skin', name: '豆皮', price: 3.5, cat: 'soy', emoji: '🫓' },
+  { id: 'bean-sprout', name: '豆芽', price: 1.5, cat: 'soy', emoji: '🌱' },
+  { id: 'dried-tofu', name: '腐竹', price: 4.0, cat: 'soy', emoji: '🥢' },
+  // meat
+  { id: 'egg', name: '鸡蛋', price: 1.0, cat: 'meat', emoji: '🥚' },
+  { id: 'pork', name: '猪肉', price: 15.0, cat: 'meat', emoji: '🥩' },
+  { id: 'chicken', name: '鸡胸肉', price: 12.0, cat: 'meat', emoji: '🍗' },
+  { id: 'beef', name: '牛肉', price: 40.0, cat: 'meat', emoji: '🥩' },
+  { id: 'ribs', name: '排骨', price: 30.0, cat: 'meat', emoji: '🍖' },
+];
+
+const menus = [
+  {
+    id: 'm1', name: '西红柿炒鸡蛋', icon: '🍅🥚', tag: '经典家常',
+    ingredients: ['西红柿', '鸡蛋', '葱'],
+    desc: '国民第一家常菜，酸甜可口，拌饭一绝。先炒蛋盛出，再炒西红柿出汁，最后合炒调味。'
+  },
+  {
+    id: 'm2', name: '酸辣土豆丝', icon: '🥔🌶️', tag: '下饭神器',
+    ingredients: ['土豆', '青椒', '干辣椒', '醋'],
+    desc: '脆爽酸辣，最考验刀工的家常菜。土豆切细丝泡水去淀粉，大火快炒30秒出锅。'
+  },
+  {
+    id: 'm3', name: '红烧茄子', icon: '🍆', tag: '米饭杀手',
+    ingredients: ['茄子', '蒜', '生抽', '糖'],
+    desc: '软糯入味，酱香浓郁。茄子切滚刀块，先煎至金黄，再加调料焖煮收汁。'
+  },
+  {
+    id: 'm4', name: '香菇青菜', icon: '🍄🥬', tag: '清淡健康',
+    ingredients: ['香菇', '青菜', '蒜'],
+    desc: '简单快手，清爽解腻。香菇切片煸香，青菜大火快炒，蒜香四溢。'
+  },
+  {
+    id: 'm5', name: '白菜豆腐汤', icon: '🥬🧈', tag: '暖心暖胃',
+    ingredients: ['大白菜', '豆腐', '姜', '枸杞'],
+    desc: '清淡鲜美，冬日暖汤。白菜手撕，豆腐切块，清水煮出食材原味，撒枸杞点缀。'
+  },
+  {
+    id: 'm6', name: '青椒肉丝', icon: '🫑🥩', tag: '经典搭配',
+    ingredients: ['青椒', '猪肉', '姜', '生抽'],
+    desc: '翠绿搭配嫩滑肉丝，永远吃不腻。肉丝先腌再滑油，青椒丝大火快翻。'
+  },
+  {
+    id: 'm7', name: '凉拌黄瓜', icon: '🥒', tag: '开胃小菜',
+    ingredients: ['黄瓜', '蒜', '醋', '辣椒油'],
+    desc: '拍黄瓜是夏天的灵魂。刀背拍裂切段，加蒜末醋汁辣油，一拌就成。'
+  },
+  {
+    id: 'm8', name: '胡萝卜炒肉', icon: '🥕🥩', tag: '营养均衡',
+    ingredients: ['胡萝卜', '猪肉', '青椒'],
+    desc: '胡萝卜的甜遇上肉香，挑食的小孩都爱吃。胡萝卜切薄片，炒软再下肉。'
+  },
+  {
+    id: 'm9', name: '排骨炖冬瓜', icon: '🍖🍈', tag: '滋补靓汤',
+    ingredients: ['排骨', '冬瓜', '姜', '枸杞'],
+    desc: '汤鲜味美，冬瓜吸饱了排骨的鲜。排骨先焯水，小火慢炖40分钟，最后下冬瓜。'
+  },
+  {
+    id: 'm10', name: '韭菜炒鸡蛋', icon: '🌾🥚', tag: '简单快手',
+    ingredients: ['韭菜', '鸡蛋'],
+    desc: '春天的韭菜最鲜美。鸡蛋炒散，韭菜段下锅翻两下就出锅，久了就老了。'
+  },
+];
+
+// ============ STATE ============
+let cart = {};
+let activeCat = 'leaf';
+let currentTab = 'shop';
+
+// ============ RENDER ============
+function renderCatTabs() {
+  const container = document.getElementById('catTabs');
+  container.innerHTML = categories.map(c =>
+    `<div class="cat-tab ${c.id === activeCat ? 'active' : ''}" onclick="setCategory('${c.id}')">${c.name}</div>`
+  ).join('');
+}
+
+function renderVegGrid() {
+  const container = document.getElementById('vegGrid');
+  const items = vegetables.filter(v => v.cat === activeCat);
+  container.innerHTML = items.map(v => {
+    const qty = cart[v.id] || 0;
+    return `
+      <div class="veg-card" onclick="addToCart('${v.id}')">
+        ${qty > 0 ? `<div class="veg-qty">${qty}</div>` : ''}
+        <span class="veg-emoji">${v.emoji}</span>
+        <div class="veg-name">${v.name}</div>
+        <div class="veg-price">¥${v.price.toFixed(1)}/份</div>
+        <div class="veg-add">+</div>
+      </div>`;
+  }).join('');
+}
+
+function renderMenuList() {
+  const container = document.getElementById('menuList');
+  container.innerHTML = menus.map(m => `
+    <div class="menu-card">
+      <div class="menu-header">
+        <span class="menu-icon">${m.icon}</span>
+        <span class="menu-title">${m.name}</span>
+        <span class="menu-tag">${m.tag}</span>
+      </div>
+      <div class="menu-ingredients">
+        ${m.ingredients.map(i => `<span class="menu-ingredient">${i}</span>`).join('')}
+      </div>
+      <p class="menu-desc">${m.desc}</p>
+      <button class="menu-add-all" onclick="event.stopPropagation(); addMenuIngredients('${m.id}')">
+        📋 加入购物车
+      </button>
+    </div>
+  `).join('');
+}
+
+function renderCart() {
+  const container = document.getElementById('cartList');
+  const footer = document.getElementById('cartFooter');
+  const empty = document.getElementById('cartEmpty');
+  const items = Object.entries(cart).filter(([,q]) => q > 0);
+
+  if (items.length === 0) {
+    container.innerHTML = '';
+    footer.style.display = 'none';
+    empty.style.display = 'block';
+  } else {
+    empty.style.display = 'none';
+    footer.style.display = 'flex';
+    container.innerHTML = items.map(([id, qty]) => {
+      const v = vegetables.find(veg => veg.id === id);
+      if (!v) return '';
+      return `
+        <div class="cart-item">
+          <span class="cart-item-emoji">${v.emoji}</span>
+          <div class="cart-item-info">
+            <div class="cart-item-name">${v.name}</div>
+            <div class="cart-item-price">¥${v.price.toFixed(1)} × ${qty} = ¥${(v.price * qty).toFixed(1)}</div>
+          </div>
+          <div class="cart-qty-wrap">
+            <button class="cart-qty-btn" onclick="decreaseQty('${id}')">−</button>
+            <span class="cart-qty-num">${qty}</span>
+            <button class="cart-qty-btn" onclick="addToCart('${id}')">+</button>
+          </div>
+          <span class="cart-item-del" onclick="removeItem('${id}')">✕</span>
+        </div>`;
+    }).join('');
+
+    const total = items.reduce((sum, [id, qty]) => {
+      const v = vegetables.find(veg => veg.id === id);
+      return sum + (v ? v.price * qty : 0);
+    }, 0);
+    document.getElementById('cartTotalPrice').textContent = '¥' + total.toFixed(1);
+  }
+}
+
+function updateBadges() {
+  const total = Object.values(cart).reduce((a, b) => a + b, 0);
+  const badge = document.getElementById('cartBadge');
+  const navBadge = document.getElementById('navCartBadge');
+
+  badge.textContent = total;
+  if (total > 0) {
+    badge.classList.add('pop');
+    setTimeout(() => badge.classList.remove('pop'), 400);
+    navBadge.style.display = 'flex';
+    navBadge.textContent = total;
+  } else {
+    navBadge.style.display = 'none';
+  }
+}
+
+// ============ ACTIONS ============
+function setCategory(catId) {
+  activeCat = catId;
+  renderCatTabs();
+  renderVegGrid();
+}
+
+function addToCart(vegId) {
+  cart[vegId] = (cart[vegId] || 0) + 1;
+  renderVegGrid();
+  updateBadges();
+  if (currentTab === 'cart') renderCart();
+}
+
+function decreaseQty(vegId) {
+  if (cart[vegId] > 1) {
+    cart[vegId]--;
+  } else {
+    delete cart[vegId];
+  }
+  renderVegGrid();
+  renderCart();
+  updateBadges();
+}
+
+function removeItem(vegId) {
+  delete cart[vegId];
+  renderVegGrid();
+  renderCart();
+  updateBadges();
+}
+
+function clearCart() {
+  cart = {};
+  renderVegGrid();
+  renderCart();
+  updateBadges();
+}
+
+function addMenuIngredients(menuId) {
+  const menu = menus.find(m => m.id === menuId);
+  if (!menu) return;
+  menu.ingredients.forEach(name => {
+    const v = vegetables.find(veg => veg.name === name);
+    if (v) {
+      cart[v.id] = (cart[v.id] || 0) + 1;
+    }
+  });
+  renderVegGrid();
+  updateBadges();
+  // bounce effect
+  const badge = document.getElementById('cartBadge');
+  badge.classList.add('pop');
+  setTimeout(() => badge.classList.remove('pop'), 400);
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+  document.getElementById('page-' + tab).classList.add('active');
+  document.getElementById('nav-' + tab).classList.add('active');
+
+  if (tab === 'cart') renderCart();
+}
+</script>
+
+<script>
+// ============ INIT ============
+renderCatTabs();
+renderVegGrid();
+renderMenuList();
+renderCart();
+updateBadges();
+</script>
+
+</body>
+</html>

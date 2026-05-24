@@ -1643,31 +1643,28 @@ function addMenuIngredients(menuId) {
   const menu = menus.find(m => m.id === menuId);
   if (!menu) return;
 
-  // separate ingredients into main vs others
+  // separate: main (meat/seafood) / side (veggies) / cond (ignored)
   const mainItems = [];
-  const otherItems = [];
+  const sideItems = [];
   menu.ingredients.forEach(name => {
     const v = vegetables.find(veg => veg.name === name || (veg.alt && veg.alt.includes(name)));
-    if (v) {
-      if (getIngredientCategory(v) === 'main') {
-        mainItems.push(v);
-      } else {
-        otherItems.push(v);
-      }
-    }
+    if (!v) return;
+    const cat = getIngredientCategory(v);
+    if (cat === 'main') mainItems.push(v);
+    else if (cat === 'side') sideItems.push(v);
+    // condiments are skipped entirely
   });
 
-  // if no main items found (vegetarian dish), add everything without popup
+  // if no main items (vegetarian), add side items directly without popup
   if (mainItems.length === 0) {
-    otherItems.forEach(v => {
-      cart[v.id] = (cart[v.id] || 0) + 1;
-    });
+    let added = 0;
+    sideItems.forEach(v => { cart[v.id] = (cart[v.id] || 0) + 1; added++; });
     renderVegGrid();
     updateBadges();
     const badge = document.getElementById('cartBadge');
     badge.classList.add('pop');
     setTimeout(() => badge.classList.remove('pop'), 400);
-    brieffeedback(menuId, otherItems.length);
+    brieffeedback(menuId, added);
     return;
   }
 
@@ -1682,35 +1679,21 @@ function addMenuIngredients(menuId) {
   setTimeout(() => badge.classList.remove('pop'), 400);
   brieffeedback(menuId, mainItems.length);
 
-  // show confirm popup for remaining items
-  if (otherItems.length > 0) {
-    pendingOthers = otherItems;
-    showConfirmPopup(menu.name, mainItems, otherItems);
+  // show confirm popup for side vegetables only
+  if (sideItems.length > 0) {
+    pendingOthers = sideItems;
+    showConfirmPopup(mainItems.length, sideItems);
   }
 }
 
-function showConfirmPopup(menuName, mainItems, otherItems) {
+function showConfirmPopup(mainCount, sideItems) {
   document.getElementById('confirmTitle').innerHTML =
-    '已添加 <b>' + mainItems.length + '</b> 种主菜到购物车<br>还需要配菜和调料吗？';
-
-  const sideItems = otherItems.filter(v => getIngredientCategory(v) === 'side');
-  const condItems = otherItems.filter(v => getIngredientCategory(v) === 'cond');
-
-  let html = '';
-  if (sideItems.length > 0) {
-    html += '<div style="font-size:0.72rem;color:var(--sub);margin:8px 0 4px;">🥬 配菜</div>';
-    html += sideItems.map(v =>
+    '已添加 <b>' + mainCount + '</b> 种主菜到购物车<br>还需要配菜吗？';
+  document.getElementById('confirmList').innerHTML =
+    '<div style="font-size:0.72rem;color:var(--sub);margin:8px 0 4px;">🥬 配菜</div>' +
+    sideItems.map(v =>
       '<span class="confirm-item side"><span class="confirm-item-emoji">' + v.emoji + '</span>' + v.name + '</span>'
     ).join('');
-  }
-  if (condItems.length > 0) {
-    html += '<div style="font-size:0.72rem;color:var(--sub);margin:8px 0 4px;">🧂 调料</div>';
-    html += condItems.map(v =>
-      '<span class="confirm-item cond"><span class="confirm-item-emoji">' + v.emoji + '</span>' + v.name + '</span>'
-    ).join('');
-  }
-
-  document.getElementById('confirmList').innerHTML = html;
   document.getElementById('confirmOverlay').style.display = 'flex';
 }
 
@@ -1726,8 +1709,7 @@ function confirmAddAll() {
   const badge = document.getElementById('cartBadge');
   badge.classList.add('pop');
   setTimeout(() => badge.classList.remove('pop'), 400);
-  // brief toast
-  showToast('✅ 已加入 ' + count + ' 种配菜和调料');
+  showToast('✅ 已加入 ' + count + ' 种配菜');
 }
 
 function closeConfirm() {

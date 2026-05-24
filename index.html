@@ -215,9 +215,10 @@ body {
   right: 8px;
   background: var(--pink);
   color: #fff;
-  width: 22px;
+  min-width: 22px;
   height: 22px;
-  border-radius: 50%;
+  padding: 0 5px;
+  border-radius: 11px;
   font-size: 0.7rem;
   font-weight: 700;
   display: flex;
@@ -359,7 +360,7 @@ body {
 
 /* ============ CART SECTION ============ */
 .cart-list {
-  padding: 12px 16px 20px;
+  padding: 12px 16px 120px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -613,6 +614,8 @@ const categories = [
   { id: 'mush', name: '🍄 菌菇', emoji: '🍄' },
   { id: 'soy', name: '🫘 豆制品', emoji: '🫘' },
   { id: 'meat', name: '🥩 肉蛋', emoji: '🥩' },
+  { id: 'seafood', name: '🐟 水产', emoji: '🐟' },
+  { id: 'condiment', name: '🧂 调料干货', emoji: '🧂' },
 ];
 
 const vegetables = [
@@ -650,10 +653,58 @@ const vegetables = [
   { id: 'dried-tofu', name: '腐竹', price: 4.0, cat: 'soy', emoji: '🥢' },
   // meat
   { id: 'egg', name: '鸡蛋', price: 1.0, cat: 'meat', emoji: '🥚' },
-  { id: 'pork', name: '猪肉', price: 15.0, cat: 'meat', emoji: '🥩' },
-  { id: 'chicken', name: '鸡胸肉', price: 12.0, cat: 'meat', emoji: '🍗' },
-  { id: 'beef', name: '牛肉', price: 40.0, cat: 'meat', emoji: '🥩' },
+  { id: 'pork', name: '猪肉', price: 15.0, cat: 'meat', emoji: '🥩', alt: ['五花肉','猪里脊','肉丝','肉末','猪肉末'] },
+  { id: 'chicken', name: '鸡胸肉', price: 12.0, cat: 'meat', emoji: '🍗', alt: ['鸡肉','鸡丁','鸡翅'] },
+  { id: 'beef', name: '牛肉', price: 40.0, cat: 'meat', emoji: '🥩', alt: ['牛腩'] },
   { id: 'ribs', name: '排骨', price: 30.0, cat: 'meat', emoji: '🍖' },
+  // seafood
+  { id: 'fish-fillet', name: '鱼片', price: 18.0, cat: 'seafood', emoji: '🐟', alt: ['鱼'] },
+  { id: 'whole-fish', name: '鲈鱼', price: 25.0, cat: 'seafood', emoji: '🐟' },
+  { id: 'shrimp', name: '虾', price: 30.0, cat: 'seafood', emoji: '🦐', alt: ['大虾'] },
+  { id: 'squid', name: '鱿鱼', price: 22.0, cat: 'seafood', emoji: '🦑' },
+  // condiments & dry goods
+  { id: 'soy-sauce', name: '生抽', price: 8.0, cat: 'condiment', emoji: '🫗' },
+  { id: 'dark-soy', name: '老抽', price: 8.0, cat: 'condiment', emoji: '🫗' },
+  { id: 'vinegar', name: '醋', price: 5.0, cat: 'condiment', emoji: '🍶', alt: ['白醋','陈醋'] },
+  { id: 'cooking-wine', name: '料酒', price: 6.0, cat: 'condiment', emoji: '🍶' },
+  { id: 'sugar', name: '糖', price: 5.0, cat: 'condiment', emoji: '🍬', alt: ['冰糖','白糖'] },
+  { id: 'salt', name: '盐', price: 3.0, cat: 'condiment', emoji: '🧂' },
+  { id: 'oil', name: '食用油', price: 25.0, cat: 'condiment', emoji: '🫒' },
+  { id: 'doubanjiang', name: '豆瓣酱', price: 10.0, cat: 'condiment', emoji: '🫙' },
+  { id: 'soybean-paste', name: '黄豆酱', price: 8.0, cat: 'condiment', emoji: '🫙' },
+  { id: 'sweet-bean-sauce', name: '甜面酱', price: 6.0, cat: 'condiment', emoji: '🫙' },
+  { id: 'ketchup', name: '番茄酱', price: 8.0, cat: 'condiment', emoji: '🍅' },
+  { id: 'oyster-sauce', name: '蚝油', price: 9.0, cat: 'condiment', emoji: '🦪' },
+  { id: 'starch', name: '淀粉', price: 4.0, cat: 'condiment', emoji: '🌾', alt: ['土豆淀粉','红薯淀粉','玉米淀粉'] },
+  { id: 'pepper-powder', name: '胡椒粉', price: 4.0, cat: 'condiment', emoji: '🧂', alt: ['白胡椒粉'] },
+  { id: 'sichuan-pepper', name: '花椒', price: 6.0, cat: 'condiment', emoji: '🫑', alt: ['花椒粉'] },
+  { id: 'dried-chili', name: '干辣椒', price: 5.0, cat: 'condiment', emoji: '🌶️' },
+  { id: 'star-anise', name: '八角', price: 4.0, cat: 'condiment', emoji: '⭐' },
+  { id: 'cinnamon', name: '桂皮', price: 4.0, cat: 'condiment', emoji: '🪵' },
+  { id: 'bay-leaf', name: '香叶', price: 3.0, cat: 'condiment', emoji: '🍃' },
+  { id: 'garlic', name: '蒜', price: 5.0, cat: 'condiment', emoji: '🧄', alt: ['蒜末'] },
+  { id: 'ginger', name: '姜', price: 4.0, cat: 'condiment', emoji: '🫚', alt: ['姜片','姜丝'] },
+  { id: 'green-onion', name: '葱', price: 2.0, cat: 'condiment', emoji: '🧅', alt: ['大葱','葱花','葱丝'] },
+  { id: 'millet-chili', name: '小米辣', price: 4.0, cat: 'condiment', emoji: '🌶️' },
+  { id: 'cilantro', name: '香菜', price: 2.0, cat: 'condiment', emoji: '🌿' },
+  { id: 'sesame', name: '芝麻', price: 5.0, cat: 'condiment', emoji: '🤍', alt: ['白芝麻'] },
+  { id: 'vermicelli', name: '粉丝', price: 4.0, cat: 'condiment', emoji: '🍝', alt: ['粉条'] },
+  { id: 'peanut', name: '花生米', price: 6.0, cat: 'condiment', emoji: '🥜' },
+  { id: 'goji', name: '枸杞', price: 15.0, cat: 'condiment', emoji: '🔴' },
+  { id: 'quail-egg', name: '鹌鹑蛋', price: 8.0, cat: 'condiment', emoji: '🥚' },
+  { id: 'sausage', name: '火腿肠', price: 5.0, cat: 'condiment', emoji: '🌭' },
+  { id: 'tofu-sheets', name: '豆腐皮', price: 3.5, cat: 'soy', emoji: '🫓' },
+  { id: 'lotus-root', name: '莲藕', price: 5.0, cat: 'root', emoji: '🪷' },
+  { id: 'zucchini', name: '西葫芦', price: 3.0, cat: 'gourd', emoji: '🥒' },
+  { id: 'green-beans', name: '四季豆', price: 4.0, cat: 'gourd', emoji: '🫘' },
+  { id: 'garlic-bolt', name: '蒜苗', price: 3.5, cat: 'leaf', emoji: '🌱', alt: ['蒜苔'] },
+  { id: 'pickled-mustard', name: '酸菜', price: 5.0, cat: 'condiment', emoji: '🥬' },
+  { id: 'ya-cai', name: '芽菜', price: 4.0, cat: 'condiment', emoji: '🌱' },
+  { id: 'douchi', name: '豆豉', price: 4.0, cat: 'condiment', emoji: '🫘' },
+  { id: 'chili-oil', name: '辣椒油', price: 10.0, cat: 'condiment', emoji: '🌶️' },
+  { id: 'steamed-soy-sauce', name: '蒸鱼豉油', price: 10.0, cat: 'condiment', emoji: '🐟' },
+  { id: 'coix-seed', name: '薏米', price: 8.0, cat: 'condiment', emoji: '🌾' },
+  { id: 'white-pepper', name: '白胡椒粉', price: 4.0, cat: 'condiment', emoji: '🧂' },
 ];
 
 const menus = [
@@ -876,7 +927,7 @@ function addMenuIngredients(menuId) {
   const menu = menus.find(m => m.id === menuId);
   if (!menu) return;
   menu.ingredients.forEach(name => {
-    const v = vegetables.find(veg => veg.name === name);
+    const v = vegetables.find(veg => veg.name === name || (veg.alt && veg.alt.includes(name)));
     if (v) {
       cart[v.id] = (cart[v.id] || 0) + 1;
     }

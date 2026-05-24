@@ -263,6 +263,211 @@ body {
   margin-top: 4px;
 }
 
+/* random pick button */
+.random-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  border-radius: 16px;
+  border: 2px dashed #FFB88C;
+  background: #fff;
+  color: var(--orange);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.25s;
+  position: relative;
+  z-index: 1;
+}
+.random-btn:hover {
+  background: var(--orange);
+  color: #fff;
+  border-color: var(--orange);
+  box-shadow: 0 4px 16px rgba(255,123,66,0.3);
+  transform: translateY(-2px);
+}
+.random-btn:active { transform: scale(0.96); }
+.random-btn-icon { font-size: 1.2rem; }
+
+/* random overlay */
+.random-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeOverlay 0.2s;
+  backdrop-filter: blur(4px);
+}
+@keyframes fadeOverlay { from { opacity: 0; } to { opacity: 1; } }
+
+.random-modal {
+  background: #fff;
+  border-radius: 24px;
+  padding: 28px 22px 22px;
+  width: 90vw;
+  max-width: 400px;
+  position: relative;
+  text-align: center;
+  animation: modalPop 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  max-height: 85vh;
+  overflow-y: auto;
+}
+@keyframes modalPop {
+  from { transform: scale(0.8) translateY(20px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.random-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #F5EDE5;
+  color: var(--sub);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.random-close:hover { background: var(--pink); color: #fff; }
+
+/* spin stage */
+.random-spin-stage { padding: 20px 0; }
+
+.random-spin-icon {
+  font-size: 5rem;
+  animation: spinSlot 0.08s linear infinite;
+  margin-bottom: 16px;
+}
+@keyframes spinSlot {
+  0% { transform: scale(1) rotate(0deg); }
+  25% { transform: scale(1.1) rotate(90deg); }
+  50% { transform: scale(1) rotate(180deg); }
+  75% { transform: scale(1.1) rotate(270deg); }
+  100% { transform: scale(1) rotate(360deg); }
+}
+
+.random-spin-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  min-height: 28px;
+  animation: textBlur 0.08s steps(1) infinite;
+}
+@keyframes textBlur {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* result stage */
+.random-result-icon {
+  font-size: 4.5rem;
+  margin-bottom: 8px;
+  animation: resultBounce 0.5s ease-out;
+}
+@keyframes resultBounce {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+.random-result-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.random-result-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 3px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.random-result-ingredients {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.random-result-ingredient {
+  font-size: 0.72rem;
+  padding: 4px 12px;
+  border-radius: 14px;
+  background: #F0F9F0;
+  color: var(--green);
+  font-weight: 600;
+}
+
+.random-result-desc {
+  font-size: 0.8rem;
+  color: var(--sub);
+  line-height: 1.8;
+  background: #FFFBF7;
+  padding: 14px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.random-result-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.random-result-add {
+  flex: 1;
+  padding: 12px;
+  border-radius: 16px;
+  border: none;
+  background: var(--green);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.random-result-add:hover { background: #4CA84C; box-shadow: 0 4px 12px rgba(92,184,92,0.3); }
+.random-result-add:active { transform: scale(0.95); }
+
+.random-result-retry {
+  flex: 1;
+  padding: 12px;
+  border-radius: 16px;
+  border: 2px solid var(--orange);
+  background: #fff;
+  color: var(--orange);
+  font-weight: 700;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.random-result-retry:hover { background: var(--orange); color: #fff; }
+.random-result-retry:active { transform: scale(0.95); }
+
+/* random btn in result (added feedback) */
+.random-result-add.added {
+  background: #4CA84C;
+  animation: popBadge 0.4s;
+}
+
 /* ============ MENU FILTERS ============ */
 .menu-filters {
   display: flex;
@@ -695,6 +900,10 @@ body {
         <div class="menu-hero-sub">50道抖音热门菜谱 · 一键买齐所有食材</div>
       </div>
     </div>
+    <button class="random-btn" onclick="randomPick()">
+      <span class="random-btn-icon">🎲</span>
+      <span>随机选一道</span>
+    </button>
   </div>
   <div class="menu-search">
     <input type="text" id="menuSearchInput" placeholder="🔍  搜索菜名、食材、做法..." oninput="renderMenuList()">
@@ -714,6 +923,28 @@ body {
   <div class="empty" id="cartEmpty">
     <span class="empty-icon">🛒</span>
     <p class="empty-text">购物车空空如也~<br>去菜单页挑个菜谱吧！</p>
+  </div>
+</div>
+
+<!-- Random Pick Modal -->
+<div class="random-overlay" id="randomOverlay" onclick="closeRandom(event)" style="display:none">
+  <div class="random-modal" id="randomModal" onclick="event.stopPropagation()">
+    <div class="random-spin-stage" id="randomSpinStage">
+      <div class="random-spin-icon" id="randomSpinIcon">🍳</div>
+      <div class="random-spin-name" id="randomSpinName"></div>
+    </div>
+    <div class="random-result" id="randomResult" style="display:none">
+      <div class="random-result-icon" id="randomResultIcon"></div>
+      <div class="random-result-title" id="randomResultTitle"></div>
+      <div class="random-result-tag" id="randomResultTag"></div>
+      <div class="random-result-ingredients" id="randomResultIngredients"></div>
+      <div class="random-result-desc" id="randomResultDesc"></div>
+      <div class="random-result-actions">
+        <button class="random-result-add" id="randomResultAdd" onclick="addRandomToCart()">📋 一键加入购物车</button>
+        <button class="random-result-retry" onclick="randomPick()">🎲 再选一次</button>
+      </div>
+    </div>
+    <button class="random-close" onclick="closeRandomDirect()">✕</button>
   </div>
 </div>
 
@@ -1006,6 +1237,96 @@ function toggleMenuDetail(event, menuId) {
   if (detail) {
     detail.classList.toggle('show');
   }
+}
+
+// ============ RANDOM PICK ============
+let randomPickMenu = null;
+let spinTimer = null;
+
+function randomPick() {
+  const overlay = document.getElementById('randomOverlay');
+  const spinStage = document.getElementById('randomSpinStage');
+  const resultStage = document.getElementById('randomResult');
+  const spinIcon = document.getElementById('randomSpinIcon');
+  const spinName = document.getElementById('randomSpinName');
+
+  // reset state
+  if (spinTimer) clearInterval(spinTimer);
+  spinStage.style.display = 'block';
+  resultStage.style.display = 'none';
+  overlay.style.display = 'flex';
+
+  // emoji pool for spinning
+  const emojis = ['🍳','🍖','🥩','🦐','🐟','🍅','🥔','🍆','🫑','🥒','🥬','🍄','🧈','🥚','🍗','🌶️','🔥','🍲','🫘','🥜'];
+  const allMenus = menus;
+  let spinCount = 0;
+  const totalSpins = 18 + Math.floor(Math.random() * 10); // 18-27 spins
+
+  spinTimer = setInterval(() => {
+    const ri = Math.floor(Math.random() * allMenus.length);
+    const m = allMenus[ri];
+    spinIcon.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    spinName.textContent = m.name;
+    spinCount++;
+
+    if (spinCount >= totalSpins) {
+      clearInterval(spinTimer);
+      spinTimer = null;
+      randomPickMenu = m;
+      showRandomResult(m);
+    }
+  }, 60 + Math.floor(spinCount * 1.5)); // gradually slow down
+}
+
+function showRandomResult(menu) {
+  const spinStage = document.getElementById('randomSpinStage');
+  const resultStage = document.getElementById('randomResult');
+
+  spinStage.style.display = 'none';
+  resultStage.style.display = 'block';
+
+  document.getElementById('randomResultIcon').textContent = menu.icon;
+  document.getElementById('randomResultTitle').textContent = menu.name;
+
+  const tagEl = document.getElementById('randomResultTag');
+  tagEl.textContent = getTagLabel(menu.cat);
+  tagEl.className = 'random-result-tag menu-card-tag ' + getTagClass(menu.cat);
+
+  document.getElementById('randomResultIngredients').innerHTML =
+    menu.ingredients.map(i => `<span class="random-result-ingredient">${i}</span>`).join('');
+
+  document.getElementById('randomResultDesc').textContent = menu.desc;
+
+  const addBtn = document.getElementById('randomResultAdd');
+  addBtn.textContent = '📋 一键加入购物车';
+  addBtn.className = 'random-result-add';
+}
+
+function addRandomToCart() {
+  if (!randomPickMenu) return;
+  addMenuIngredients(randomPickMenu.id);
+  const addBtn = document.getElementById('randomResultAdd');
+  addBtn.textContent = '✓ 已加入购物车';
+  addBtn.classList.add('added');
+  setTimeout(() => {
+    addBtn.textContent = '📋 一键加入购物车';
+    addBtn.classList.remove('added');
+  }, 1500);
+}
+
+function closeRandom(e) {
+  if (e.target === document.getElementById('randomOverlay')) {
+    closeRandomDirect();
+  }
+}
+
+function closeRandomDirect() {
+  if (spinTimer) {
+    clearInterval(spinTimer);
+    spinTimer = null;
+  }
+  document.getElementById('randomOverlay').style.display = 'none';
+  randomPickMenu = null;
 }
 
 function renderCart() {

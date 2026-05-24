@@ -617,6 +617,219 @@ body {
 .confirm-btn-no:hover { background: #F5EDE5; }
 .confirm-btn-no:active { transform: scale(0.95); }
 
+/* ============ ADMIN ============ */
+.admin-entry {
+  position: fixed;
+  top: 14px;
+  left: 16px;
+  z-index: 60;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.9);
+  border: 2px solid #E8D5C4;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.admin-entry:hover { border-color: var(--purple); box-shadow: 0 3px 12px rgba(176,124,216,0.2); }
+
+.admin-pwd-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.admin-pwd-box {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 22px 20px;
+  width: 85vw;
+  max-width: 340px;
+  text-align: center;
+  animation: modalPop 0.3s ease-out;
+}
+.admin-pwd-box h3 { font-size: 1.1rem; margin-bottom: 14px; }
+.admin-pwd-box input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  border: 2px solid #E8D5C4;
+  font-size: 1rem;
+  outline: none;
+  text-align: center;
+  margin-bottom: 14px;
+}
+.admin-pwd-box input:focus { border-color: var(--purple); }
+.admin-pwd-box .admin-pwd-actions { display: flex; gap: 10px; }
+.admin-pwd-box .admin-pwd-actions button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.admin-pwd-confirm { background: var(--purple); color: #fff; }
+.admin-pwd-cancel { background: #F5EDE5; color: var(--sub); }
+
+.admin-page { display: none; }
+.admin-page.active { display: block; animation: fadePage 0.3s; }
+
+.admin-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #F8F0FF, #EDE0F8);
+  border-bottom: 2px solid #D8C8E8;
+}
+.admin-bar-title { font-weight: 800; font-size: 0.95rem; color: var(--purple); flex: 1; }
+.admin-bar-exit {
+  padding: 6px 14px;
+  border-radius: 14px;
+  border: 2px solid var(--purple);
+  background: #fff;
+  color: var(--purple);
+  font-weight: 700;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.admin-bar-exit:hover { background: var(--purple); color: #fff; }
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 12px 16px;
+}
+.admin-stat {
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px;
+  text-align: center;
+  border: 2px solid #F0E8F8;
+}
+.admin-stat-num { font-size: 1.4rem; font-weight: 800; color: var(--purple); }
+.admin-stat-label { font-size: 0.65rem; color: var(--sub); margin-top: 2px; }
+
+.admin-inventory {
+  padding: 0 16px 100px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.admin-item {
+  background: #fff;
+  border-radius: 14px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 2px solid #F5EDE5;
+  transition: all 0.2s;
+}
+.admin-item.unlisted { opacity: 0.45; background: #FAFAFA; }
+.admin-item-emoji { font-size: 1.6rem; }
+.admin-item-info { flex: 1; min-width: 0; }
+.admin-item-name { font-weight: 700; font-size: 0.82rem; }
+.admin-item-cat { font-size: 0.65rem; color: var(--sub); }
+
+.admin-stock-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.admin-stock-btn {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: 2px solid #E8D5C4;
+  background: #fff;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+}
+.admin-stock-btn:hover { border-color: var(--purple); color: var(--purple); }
+.admin-stock-num {
+  font-size: 0.9rem;
+  font-weight: 700;
+  min-width: 22px;
+  text-align: center;
+}
+.admin-stock-num.zero { color: var(--pink); }
+
+.admin-toggle {
+  width: 44px; height: 26px;
+  border-radius: 13px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+  flex-shrink: 0;
+}
+.admin-toggle.on { background: var(--green); }
+.admin-toggle.off { background: #CCC; }
+.admin-toggle::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  transition: all 0.2s;
+}
+.admin-toggle.on::after { left: 21px; }
+.admin-toggle.off::after { left: 3px; }
+
+.admin-cat-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 8px 16px 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.admin-cat-tabs::-webkit-scrollbar { display: none; }
+.admin-cat-chip {
+  flex-shrink: 0;
+  padding: 5px 14px;
+  border-radius: 14px;
+  border: 2px solid #F0E8F8;
+  background: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--sub);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.admin-cat-chip.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+
+/* stock badge on veg cards */
+.veg-stock-low {
+  position: absolute;
+  top: 6px; left: 8px;
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: var(--pink);
+  background: #FFF0F0;
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+.veg-oos { opacity: 0.5; pointer-events: none; }
+
 /* ============ MENU FILTERS ============ */
 .menu-filters {
   display: flex;
@@ -1030,6 +1243,9 @@ body {
   </h1>
 </div>
 
+<!-- Admin Entry -->
+<button class="admin-entry" onclick="showAdminLogin()" title="商家后台">⚙</button>
+
 <!-- Cart Badge -->
 <div class="cart-badge" id="cartBadge" onclick="switchTab('cart')" title="购物车">0</div>
 
@@ -1113,6 +1329,30 @@ body {
       <button class="confirm-btn-no" onclick="closeConfirm()">不用了</button>
     </div>
   </div>
+</div>
+
+<!-- Admin Password Modal -->
+<div class="admin-pwd-overlay" id="adminPwdOverlay" style="display:none">
+  <div class="admin-pwd-box" onclick="event.stopPropagation()">
+    <h3>🔐 商家后台登录</h3>
+    <input type="password" id="adminPwdInput" placeholder="请输入后台密码" onkeydown="if(event.key==='Enter')adminLogin()">
+    <div class="admin-pwd-actions">
+      <button class="admin-pwd-cancel" onclick="closeAdminLogin()">取消</button>
+      <button class="admin-pwd-confirm" onclick="adminLogin()">登录</button>
+    </div>
+  </div>
+</div>
+
+<!-- Admin Page -->
+<div class="admin-page" id="page-admin">
+  <div class="admin-bar">
+    <span class="admin-bar-title">📊 商家后台</span>
+    <span style="font-size:0.7rem;color:var(--sub)" id="adminNotice">修改后自动保存</span>
+    <button class="admin-bar-exit" onclick="exitAdmin()">退出后台</button>
+  </div>
+  <div class="admin-stats" id="adminStats"></div>
+  <div class="admin-cat-tabs" id="adminCatTabs"></div>
+  <div class="admin-inventory" id="adminInventory"></div>
 </div>
 
 <!-- Bottom Nav -->
@@ -1326,16 +1566,20 @@ function renderCatTabs() {
 
 function renderVegGrid() {
   const container = document.getElementById('vegGrid');
-  const items = vegetables.filter(v => v.cat === activeCat);
+  const items = vegetables.filter(v => v.cat === activeCat && v.listed);
   container.innerHTML = items.map(v => {
     const qty = cart[v.id] || 0;
+    const soldOut = v.stock <= 0;
+    const lowStock = !soldOut && v.stock <= 5;
     return `
-      <div class="veg-card" onclick="addToCart('${v.id}')">
-        ${qty > 0 ? `<div class="veg-qty">${qty}</div>` : ''}
+      <div class="veg-card${soldOut ? ' veg-oos' : ''}" onclick="${soldOut ? '' : "addToCart('" + v.id + "')"}">
+        ${qty > 0 ? '<div class="veg-qty">' + qty + '</div>' : ''}
+        ${lowStock ? '<div class="veg-stock-low">仅剩' + v.stock + '份</div>' : ''}
+        ${soldOut ? '<div class="veg-stock-low" style="color:#999;background:#F5F5F5">售罄</div>' : ''}
         <span class="veg-emoji">${v.emoji}</span>
         <div class="veg-name">${v.name}</div>
         <div class="veg-price">¥${v.price.toFixed(1)}/份</div>
-        <div class="veg-add">+</div>
+        <div class="veg-add">${soldOut ? '—' : '+'}</div>
       </div>`;
   }).join('');
 }
@@ -1412,29 +1656,15 @@ let spinTimer = null;
 
 // random veggie on shop page
 function randomVeg() {
-  const v = vegetables[Math.floor(Math.random() * vegetables.length)];
-  cart[v.id] = (cart[v.id] || 0) + 1;
+  const available = vegetables.filter(v => v.listed && v.stock > 0);
+  if (available.length === 0) { showToast('⚠️ 没有可用的食材'); return; }
+  const v = available[Math.floor(Math.random() * available.length)];
+  const currentQty = cart[v.id] || 0;
+  if (currentQty >= v.stock) { showToast('⚠️ 「' + v.name + '」库存不足'); return; }
+  cart[v.id] = currentQty + 1;
   renderVegGrid();
   updateBadges();
-  // show toast
-  const toast = document.getElementById('randomToast');
-  toast.textContent = '🎲 随机选了「' + v.name + '」已加入购物车';
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2000);
-  // scroll to the veg card if visible
-  const cards = document.querySelectorAll('.veg-card');
-  const idx = vegetables.filter(vg => vg.cat === activeCat).findIndex(vg => vg.id === v.id);
-  if (idx >= 0 && cards[idx]) {
-    cards[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
-    cards[idx].style.transform = 'scale(1.08)';
-    cards[idx].style.borderColor = 'var(--orange)';
-    cards[idx].style.boxShadow = '0 0 20px rgba(255,123,66,0.3)';
-    setTimeout(() => {
-      cards[idx].style.transform = '';
-      cards[idx].style.borderColor = '';
-      cards[idx].style.boxShadow = '';
-    }, 600);
-  }
+  showToast('🎲 随机选了「' + v.name + '」已加入购物车');
   // if current tab is shop, switch to the category of the random veg
   if (currentTab === 'shop') {
     activeCat = v.cat;
@@ -1599,7 +1829,14 @@ function setMenuFilter(filterId) {
 }
 
 function addToCart(vegId) {
-  cart[vegId] = (cart[vegId] || 0) + 1;
+  const v = vegetables.find(vg => vg.id === vegId);
+  if (!v || !v.listed) return;
+  const currentQty = cart[vegId] || 0;
+  if (currentQty >= v.stock) {
+    showToast('⚠️ 「' + v.name + '」库存不足，当前库存 ' + v.stock + ' 份');
+    return;
+  }
+  cart[vegId] = currentQty + 1;
   renderVegGrid();
   updateBadges();
   if (currentTab === 'cart') renderCart();
@@ -1644,45 +1881,50 @@ function addMenuIngredients(menuId) {
   if (!menu) return;
 
   // separate: main (meat/seafood) / side (veggies) / cond (ignored)
+  // only include listed items with stock
   const mainItems = [];
   const sideItems = [];
   menu.ingredients.forEach(name => {
     const v = vegetables.find(veg => veg.name === name || (veg.alt && veg.alt.includes(name)));
-    if (!v) return;
+    if (!v || !v.listed) return;
     const cat = getIngredientCategory(v);
     if (cat === 'main') mainItems.push(v);
     else if (cat === 'side') sideItems.push(v);
-    // condiments are skipped entirely
   });
 
   // if no main items (vegetarian), add side items directly without popup
   if (mainItems.length === 0) {
     let added = 0;
-    sideItems.forEach(v => { cart[v.id] = (cart[v.id] || 0) + 1; added++; });
+    sideItems.forEach(v => {
+      const qty = cart[v.id] || 0;
+      if (qty < v.stock) { cart[v.id] = qty + 1; added++; }
+    });
     renderVegGrid();
     updateBadges();
     const badge = document.getElementById('cartBadge');
     badge.classList.add('pop');
     setTimeout(() => badge.classList.remove('pop'), 400);
-    brieffeedback(menuId, added);
+    if (added > 0) brieffeedback(menuId, added);
     return;
   }
 
-  // auto-add main items
+  // auto-add main items (check stock)
+  let mainAdded = 0;
   mainItems.forEach(v => {
-    cart[v.id] = (cart[v.id] || 0) + 1;
+    const qty = cart[v.id] || 0;
+    if (qty < v.stock) { cart[v.id] = qty + 1; mainAdded++; }
   });
   renderVegGrid();
   updateBadges();
   const badge = document.getElementById('cartBadge');
   badge.classList.add('pop');
   setTimeout(() => badge.classList.remove('pop'), 400);
-  brieffeedback(menuId, mainItems.length);
+  if (mainAdded > 0) brieffeedback(menuId, mainAdded);
 
   // show confirm popup for side vegetables only
   if (sideItems.length > 0) {
     pendingOthers = sideItems;
-    showConfirmPopup(mainItems.length, sideItems);
+    showConfirmPopup(mainAdded, sideItems);
   }
 }
 
@@ -1698,10 +1940,11 @@ function showConfirmPopup(mainCount, sideItems) {
 }
 
 function confirmAddAll() {
+  let added = 0;
   pendingOthers.forEach(v => {
-    cart[v.id] = (cart[v.id] || 0) + 1;
+    const qty = cart[v.id] || 0;
+    if (v.listed && qty < v.stock) { cart[v.id] = qty + 1; added++; }
   });
-  const count = pendingOthers.length;
   pendingOthers = [];
   document.getElementById('confirmOverlay').style.display = 'none';
   renderVegGrid();
@@ -1709,7 +1952,7 @@ function confirmAddAll() {
   const badge = document.getElementById('cartBadge');
   badge.classList.add('pop');
   setTimeout(() => badge.classList.remove('pop'), 400);
-  showToast('✅ 已加入 ' + count + ' 种配菜');
+  showToast('✅ 已加入 ' + added + ' 种配菜');
 }
 
 function closeConfirm() {
@@ -1750,10 +1993,164 @@ function switchTab(tab) {
   if (tab === 'cart') renderCart();
   if (tab === 'menu') renderMenuList();
 }
+
+// ============ ADMIN ============
+const ADMIN_PWD = '8888';
+let isAdmin = false;
+let adminActiveCat = 'all';
+
+function initStock() {
+  const saved = localStorage.getItem('grocery_inventory');
+  if (saved) {
+    const data = JSON.parse(saved);
+    vegetables.forEach(v => {
+      if (data[v.id] !== undefined) {
+        v.stock = data[v.id].stock;
+        v.listed = data[v.id].listed;
+      } else {
+        if (v.stock === undefined) v.stock = 99;
+        if (v.listed === undefined) v.listed = true;
+      }
+    });
+  } else {
+    vegetables.forEach(v => {
+      if (v.stock === undefined) v.stock = 99;
+      if (v.listed === undefined) v.listed = true;
+    });
+  }
+}
+
+function saveStock() {
+  const data = {};
+  vegetables.forEach(v => { data[v.id] = { stock: v.stock, listed: v.listed }; });
+  localStorage.setItem('grocery_inventory', JSON.stringify(data));
+  updateAdminStats();
+}
+
+function showAdminLogin() {
+  document.getElementById('adminPwdOverlay').style.display = 'flex';
+  document.getElementById('adminPwdInput').value = '';
+  setTimeout(() => document.getElementById('adminPwdInput').focus(), 200);
+}
+
+function closeAdminLogin() {
+  document.getElementById('adminPwdOverlay').style.display = 'none';
+}
+
+function adminLogin() {
+  const pwd = document.getElementById('adminPwdInput').value;
+  if (pwd === ADMIN_PWD) {
+    isAdmin = true;
+    document.getElementById('adminPwdOverlay').style.display = 'none';
+    showAdminPage();
+  } else {
+    const input = document.getElementById('adminPwdInput');
+    input.style.borderColor = 'var(--pink)';
+    input.placeholder = '密码错误，请重试';
+    input.value = '';
+    setTimeout(() => { input.style.borderColor = ''; input.placeholder = '请输入后台密码'; }, 1200);
+  }
+}
+
+function showAdminPage() {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-admin').classList.add('active');
+  currentTab = 'admin';
+  updateAdminStats();
+  renderAdminFilters();
+  renderAdminInventory();
+}
+
+function exitAdmin() {
+  isAdmin = false;
+  document.getElementById('page-admin').classList.remove('active');
+  switchTab('menu');
+  renderVegGrid();
+  renderMenuList();
+}
+
+function updateAdminStats() {
+  const listed = vegetables.filter(v => v.listed);
+  const unlisted = vegetables.filter(v => !v.listed);
+  const oos = vegetables.filter(v => v.listed && v.stock <= 0);
+  document.getElementById('adminStats').innerHTML =
+    '<div class="admin-stat"><div class="admin-stat-num">' + listed.length + '</div><div class="admin-stat-label">上架中</div></div>' +
+    '<div class="admin-stat"><div class="admin-stat-num">' + oos.length + '</div><div class="admin-stat-label">已售罄</div></div>' +
+    '<div class="admin-stat"><div class="admin-stat-num">' + unlisted.length + '</div><div class="admin-stat-label">已下架</div></div>';
+}
+
+function renderAdminFilters() {
+  const container = document.getElementById('adminCatTabs');
+  const chips = [{ id: 'all', name: '全部' }, ...categories];
+  container.innerHTML = chips.map(c =>
+    '<div class="admin-cat-chip ' + (c.id === adminActiveCat ? 'active' : '') + '" onclick="setAdminCat(\'' + c.id + '\')">' + c.name + '</div>'
+  ).join('');
+}
+
+function setAdminCat(catId) {
+  adminActiveCat = catId;
+  renderAdminFilters();
+  renderAdminInventory();
+}
+
+function renderAdminInventory() {
+  const container = document.getElementById('adminInventory');
+  const items = adminActiveCat === 'all' ? vegetables : vegetables.filter(v => v.cat === adminActiveCat);
+  container.innerHTML = items.map(v => {
+    const cls = v.listed ? '' : 'unlisted';
+    const stockCls = v.stock <= 0 ? 'zero' : '';
+    return '<div class="admin-item ' + cls + '">' +
+      '<span class="admin-item-emoji">' + v.emoji + '</span>' +
+      '<div class="admin-item-info">' +
+        '<div class="admin-item-name">' + v.name + '</div>' +
+        '<div class="admin-item-cat">¥' + v.price.toFixed(1) + ' / ' + (categories.find(c=>c.id===v.cat)||{}).name + '</div>' +
+      '</div>' +
+      '<div class="admin-stock-wrap">' +
+        '<button class="admin-stock-btn" onclick="changeStock(\'' + v.id + '\', -1)">−</button>' +
+        '<span class="admin-stock-num ' + stockCls + '">' + v.stock + '</span>' +
+        '<button class="admin-stock-btn" onclick="changeStock(\'' + v.id + '\', 1)">+</button>' +
+      '</div>' +
+      '<button class="admin-toggle ' + (v.listed ? 'on' : 'off') + '" onclick="toggleListed(\'' + v.id + '\')" title="上架/下架"></button>' +
+    '</div>';
+  }).join('');
+}
+
+function changeStock(vegId, delta) {
+  const v = vegetables.find(vg => vg.id === vegId);
+  if (!v) return;
+  v.stock = Math.max(0, v.stock + delta);
+  saveStock();
+  renderAdminInventory();
+  renderVegGrid();
+}
+
+function toggleListed(vegId) {
+  const v = vegetables.find(vg => vg.id === vegId);
+  if (!v) return;
+  v.listed = !v.listed;
+  if (!v.listed) v.stock = 0;
+  saveStock();
+  renderAdminInventory();
+  updateAdminStats();
+  renderVegGrid();
+}
+
+function checkStock(vegId) {
+  const v = vegetables.find(vg => vg.id === vegId);
+  if (!v) return false;
+  return v.listed && v.stock > 0;
+}
+
+function getStock(vegId) {
+  const v = vegetables.find(vg => vg.id === vegId);
+  return v ? v.stock : 0;
+}
 </script>
 
 <script>
 // ============ INIT ============
+initStock();
 renderCatTabs();
 renderVegGrid();
 renderMenuFilters();

@@ -519,6 +519,104 @@ body {
   transform: translateX(-50%) translateY(0);
 }
 
+/* ============ CONFIRM MODAL (ingredient add) ============ */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeOverlay 0.2s;
+  backdrop-filter: blur(4px);
+}
+
+.confirm-modal {
+  background: #fff;
+  border-radius: 24px;
+  padding: 24px 20px 20px;
+  width: 88vw;
+  max-width: 380px;
+  text-align: center;
+  animation: modalPop 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.confirm-icon { font-size: 3rem; margin-bottom: 8px; }
+
+.confirm-title {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 4px;
+  line-height: 1.5;
+}
+
+.confirm-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 14px 0;
+}
+
+.confirm-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  background: #FFFBF5;
+  border: 2px solid #F5EDE5;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.confirm-item.main { background: #FFF0E6; border-color: #FFD6B8; }
+.confirm-item.side { background: #F0F9F0; border-color: #B8E6C8; }
+.confirm-item.cond { background: #FFF5F5; border-color: #FFD0D0; }
+
+.confirm-item-emoji { font-size: 1.1rem; }
+
+.confirm-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.confirm-btn-yes {
+  flex: 1;
+  padding: 12px;
+  border-radius: 16px;
+  border: none;
+  background: var(--green);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.confirm-btn-yes:hover { background: #4CA84C; box-shadow: 0 4px 12px rgba(92,184,92,0.3); }
+.confirm-btn-yes:active { transform: scale(0.95); }
+
+.confirm-btn-no {
+  flex: 1;
+  padding: 12px;
+  border-radius: 16px;
+  border: 2px solid #E8D5C4;
+  background: #fff;
+  color: var(--sub);
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.confirm-btn-no:hover { background: #F5EDE5; }
+.confirm-btn-no:active { transform: scale(0.95); }
+
 /* ============ MENU FILTERS ============ */
 .menu-filters {
   display: flex;
@@ -942,8 +1040,9 @@ body {
   <button class="shop-random-fab" onclick="randomVeg()" title="随机来一份">
     <span>🎲</span>
   </button>
-  <div class="random-toast" id="randomToast"></div>
 </div>
+
+<div class="random-toast" id="randomToast"></div>
 
 <!-- ============ PAGE 2: MENUS (主界面) ============ -->
 <div class="page active" id="page-menu">
@@ -1000,6 +1099,19 @@ body {
       </div>
     </div>
     <button class="random-close" onclick="closeRandomDirect()">✕</button>
+  </div>
+</div>
+
+<!-- Ingredient Confirm Modal -->
+<div class="confirm-overlay" id="confirmOverlay" style="display:none" onclick="closeConfirm()">
+  <div class="confirm-modal" onclick="event.stopPropagation()">
+    <div class="confirm-icon">🛒</div>
+    <div class="confirm-title" id="confirmTitle"></div>
+    <div class="confirm-list" id="confirmList"></div>
+    <div class="confirm-actions">
+      <button class="confirm-btn-yes" id="confirmBtnYes" onclick="confirmAddAll()">✅ 全部加入</button>
+      <button class="confirm-btn-no" onclick="closeConfirm()">不用了</button>
+    </div>
   </div>
 </div>
 
@@ -1518,37 +1630,130 @@ function clearCart() {
   updateBadges();
 }
 
+// pending ingredients for confirm modal
+let pendingOthers = [];
+
+function getIngredientCategory(veg) {
+  if (veg.cat === 'meat' || veg.cat === 'seafood') return 'main';
+  if (veg.cat === 'condiment') return 'cond';
+  return 'side';
+}
+
 function addMenuIngredients(menuId) {
   const menu = menus.find(m => m.id === menuId);
   if (!menu) return;
-  let added = 0;
+
+  // separate ingredients into main vs others
+  const mainItems = [];
+  const otherItems = [];
   menu.ingredients.forEach(name => {
     const v = vegetables.find(veg => veg.name === name || (veg.alt && veg.alt.includes(name)));
     if (v) {
-      cart[v.id] = (cart[v.id] || 0) + 1;
-      added++;
+      if (getIngredientCategory(v) === 'main') {
+        mainItems.push(v);
+      } else {
+        otherItems.push(v);
+      }
     }
+  });
+
+  // if no main items found (vegetarian dish), add everything without popup
+  if (mainItems.length === 0) {
+    otherItems.forEach(v => {
+      cart[v.id] = (cart[v.id] || 0) + 1;
+    });
+    renderVegGrid();
+    updateBadges();
+    const badge = document.getElementById('cartBadge');
+    badge.classList.add('pop');
+    setTimeout(() => badge.classList.remove('pop'), 400);
+    brieffeedback(menuId, otherItems.length);
+    return;
+  }
+
+  // auto-add main items
+  mainItems.forEach(v => {
+    cart[v.id] = (cart[v.id] || 0) + 1;
   });
   renderVegGrid();
   updateBadges();
-  // bounce effect
   const badge = document.getElementById('cartBadge');
   badge.classList.add('pop');
   setTimeout(() => badge.classList.remove('pop'), 400);
-  // briefly highlight feedback
-  if (added > 0) {
-    const btn = event && event.target;
-    if (btn && btn.classList.contains('menu-card-add')) {
-      const orig = btn.textContent;
-      btn.textContent = '✓ 已加入 ' + added + ' 种食材';
-      btn.style.background = 'var(--green)';
-      btn.style.color = '#fff';
-      setTimeout(() => {
-        btn.textContent = orig;
-        btn.style.background = '#fff';
-        btn.style.color = 'var(--green)';
-      }, 1500);
-    }
+  brieffeedback(menuId, mainItems.length);
+
+  // show confirm popup for remaining items
+  if (otherItems.length > 0) {
+    pendingOthers = otherItems;
+    showConfirmPopup(menu.name, mainItems, otherItems);
+  }
+}
+
+function showConfirmPopup(menuName, mainItems, otherItems) {
+  document.getElementById('confirmTitle').innerHTML =
+    '已添加 <b>' + mainItems.length + '</b> 种主菜到购物车<br>还需要配菜和调料吗？';
+
+  const sideItems = otherItems.filter(v => getIngredientCategory(v) === 'side');
+  const condItems = otherItems.filter(v => getIngredientCategory(v) === 'cond');
+
+  let html = '';
+  if (sideItems.length > 0) {
+    html += '<div style="font-size:0.72rem;color:var(--sub);margin:8px 0 4px;">🥬 配菜</div>';
+    html += sideItems.map(v =>
+      '<span class="confirm-item side"><span class="confirm-item-emoji">' + v.emoji + '</span>' + v.name + '</span>'
+    ).join('');
+  }
+  if (condItems.length > 0) {
+    html += '<div style="font-size:0.72rem;color:var(--sub);margin:8px 0 4px;">🧂 调料</div>';
+    html += condItems.map(v =>
+      '<span class="confirm-item cond"><span class="confirm-item-emoji">' + v.emoji + '</span>' + v.name + '</span>'
+    ).join('');
+  }
+
+  document.getElementById('confirmList').innerHTML = html;
+  document.getElementById('confirmOverlay').style.display = 'flex';
+}
+
+function confirmAddAll() {
+  pendingOthers.forEach(v => {
+    cart[v.id] = (cart[v.id] || 0) + 1;
+  });
+  const count = pendingOthers.length;
+  pendingOthers = [];
+  document.getElementById('confirmOverlay').style.display = 'none';
+  renderVegGrid();
+  updateBadges();
+  const badge = document.getElementById('cartBadge');
+  badge.classList.add('pop');
+  setTimeout(() => badge.classList.remove('pop'), 400);
+  // brief toast
+  showToast('✅ 已加入 ' + count + ' 种配菜和调料');
+}
+
+function closeConfirm() {
+  pendingOthers = [];
+  document.getElementById('confirmOverlay').style.display = 'none';
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('randomToast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+function brieffeedback(menuId, added) {
+  const btn = event && event.target;
+  if (btn && btn.classList.contains('menu-card-add')) {
+    const orig = btn.textContent;
+    btn.textContent = '✓ 已加入 ' + added + ' 种';
+    btn.style.background = 'var(--green)';
+    btn.style.color = '#fff';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.background = '#fff';
+      btn.style.color = 'var(--green)';
+    }, 1500);
   }
 }
 

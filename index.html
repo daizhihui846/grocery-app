@@ -468,6 +468,57 @@ body {
   animation: popBadge 0.4s;
 }
 
+/* shop floating random button */
+.shop-random-fab {
+  position: fixed;
+  bottom: 100px;
+  right: 16px;
+  z-index: 45;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid var(--orange);
+  background: #fff;
+  color: var(--orange);
+  font-size: 1.4rem;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(255,123,66,0.3);
+  transition: all 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.shop-random-fab:hover {
+  transform: scale(1.1);
+  background: var(--orange);
+  box-shadow: 0 6px 24px rgba(255,123,66,0.4);
+}
+.shop-random-fab:active { transform: scale(0.9); }
+
+/* toast notification */
+.random-toast {
+  position: fixed;
+  bottom: 130px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  z-index: 46;
+  background: var(--text);
+  color: #fff;
+  padding: 12px 22px;
+  border-radius: 24px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+  white-space: nowrap;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+.random-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 /* ============ MENU FILTERS ============ */
 .menu-filters {
   display: flex;
@@ -888,6 +939,10 @@ body {
 <div class="page" id="page-shop">
   <div class="cat-tabs" id="catTabs"></div>
   <div class="veg-grid" id="vegGrid"></div>
+  <button class="shop-random-fab" onclick="randomVeg()" title="随机来一份">
+    <span>🎲</span>
+  </button>
+  <div class="random-toast" id="randomToast"></div>
 </div>
 
 <!-- ============ PAGE 2: MENUS (主界面) ============ -->
@@ -1242,6 +1297,39 @@ function toggleMenuDetail(event, menuId) {
 // ============ RANDOM PICK ============
 let randomPickMenu = null;
 let spinTimer = null;
+
+// random veggie on shop page
+function randomVeg() {
+  const v = vegetables[Math.floor(Math.random() * vegetables.length)];
+  cart[v.id] = (cart[v.id] || 0) + 1;
+  renderVegGrid();
+  updateBadges();
+  // show toast
+  const toast = document.getElementById('randomToast');
+  toast.textContent = '🎲 随机选了「' + v.name + '」已加入购物车';
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2000);
+  // scroll to the veg card if visible
+  const cards = document.querySelectorAll('.veg-card');
+  const idx = vegetables.filter(vg => vg.cat === activeCat).findIndex(vg => vg.id === v.id);
+  if (idx >= 0 && cards[idx]) {
+    cards[idx].scrollIntoView({ behavior: 'smooth', block: 'center' });
+    cards[idx].style.transform = 'scale(1.08)';
+    cards[idx].style.borderColor = 'var(--orange)';
+    cards[idx].style.boxShadow = '0 0 20px rgba(255,123,66,0.3)';
+    setTimeout(() => {
+      cards[idx].style.transform = '';
+      cards[idx].style.borderColor = '';
+      cards[idx].style.boxShadow = '';
+    }, 600);
+  }
+  // if current tab is shop, switch to the category of the random veg
+  if (currentTab === 'shop') {
+    activeCat = v.cat;
+    renderCatTabs();
+    renderVegGrid();
+  }
+}
 
 function randomPick() {
   const overlay = document.getElementById('randomOverlay');

@@ -617,6 +617,254 @@ body {
 .confirm-btn-no:hover { background: #F5EDE5; }
 .confirm-btn-no:active { transform: scale(0.95); }
 
+/* ============ PAYMENT ============ */
+.cart-footer-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.cart-checkout {
+  padding: 8px 18px;
+  border-radius: 20px;
+  border: none;
+  background: linear-gradient(135deg, var(--orange), var(--pink));
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 0.82rem;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.cart-checkout:hover {
+  box-shadow: 0 4px 14px rgba(255,107,138,0.35);
+  transform: translateY(-1px);
+}
+.cart-checkout:active { transform: scale(0.95); }
+
+.pay-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeOverlay 0.2s;
+}
+
+.pay-modal {
+  background: #fff;
+  border-radius: 24px 24px 0 0;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.pay-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid #F5EDE5;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 2;
+  border-radius: 24px 24px 0 0;
+}
+.pay-title { font-size: 1.05rem; font-weight: 800; }
+.pay-back { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; color: var(--sub); }
+
+.pay-addr {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: #FFFBF5;
+  border-bottom: 1px solid #F5EDE5;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.pay-addr-icon { font-size: 1.2rem; }
+
+.pay-items {
+  padding: 8px 18px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+.pay-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #FAF5F0;
+}
+.pay-item:last-child { border-bottom: none; }
+.pay-item-emoji { font-size: 1.5rem; }
+.pay-item-info { flex: 1; }
+.pay-item-name { font-weight: 700; font-size: 0.85rem; }
+.pay-item-qty { font-size: 0.7rem; color: var(--sub); }
+.pay-item-price { font-weight: 700; font-size: 0.85rem; color: var(--pink); }
+
+.pay-summary {
+  padding: 12px 18px;
+  border-top: 1px solid #F5EDE5;
+  background: #FFFBF7;
+}
+.pay-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--sub);
+  padding: 4px 0;
+}
+.pay-total-row {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--text);
+  padding-top: 8px;
+  margin-top: 4px;
+  border-top: 1px dashed #E8D5C4;
+}
+.pay-total-row span:last-child { color: var(--pink); font-size: 1.1rem; }
+
+.pay-methods {
+  padding: 12px 18px;
+}
+.pay-method-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--sub);
+  margin-bottom: 10px;
+}
+
+.pay-method {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 2px solid #F0EDE5;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.pay-method input { display: none; }
+.pay-method-icon { font-size: 1.4rem; }
+.pay-method-name { font-weight: 700; font-size: 0.88rem; flex: 1; }
+.pay-method-check {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  border: 2px solid #DDD;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  color: transparent;
+  transition: all 0.2s;
+}
+.pay-method.selected {
+  border-color: var(--green);
+  background: #F5FFF5;
+}
+.pay-method.selected .pay-method-check {
+  border-color: var(--green);
+  background: var(--green);
+  color: #fff;
+}
+
+.pay-submit {
+  display: block;
+  width: calc(100% - 36px);
+  margin: 0 18px 20px;
+  padding: 14px;
+  border-radius: 16px;
+  border: none;
+  background: linear-gradient(135deg, var(--green), #4CA84C);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(92,184,92,0.3);
+}
+.pay-submit:hover { box-shadow: 0 6px 20px rgba(92,184,92,0.4); transform: translateY(-1px); }
+.pay-submit:active { transform: scale(0.97); }
+
+/* processing */
+.pay-processing {
+  text-align: center;
+  padding: 50px 20px;
+}
+.pay-spinner {
+  width: 48px; height: 48px;
+  border: 4px solid #F0EDE5;
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.pay-processing-text { font-size: 0.9rem; font-weight: 700; color: var(--sub); }
+
+/* success */
+.pay-success {
+  text-align: center;
+  padding: 30px 20px 20px;
+}
+.pay-success-icon {
+  font-size: 4rem;
+  animation: resultBounce 0.5s ease-out;
+}
+.pay-success-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin: 10px 0 6px;
+}
+.pay-success-amount {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--pink);
+  margin-bottom: 4px;
+}
+.pay-success-order {
+  font-size: 0.75rem;
+  color: var(--sub);
+  margin-bottom: 20px;
+}
+.pay-done-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  border-radius: 16px;
+  border: none;
+  background: var(--green);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+.pay-view-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  border-radius: 16px;
+  border: 2px solid #E8D5C4;
+  background: #fff;
+  color: var(--sub);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
 /* ============ ADMIN ============ */
 .admin-entry {
   position: fixed;
@@ -816,6 +1064,60 @@ body {
   white-space: nowrap;
 }
 .admin-cat-chip.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+
+/* admin order history */
+.admin-section-title {
+  padding: 14px 16px 8px;
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.admin-orders {
+  padding: 0 16px 100px;
+}
+
+.order-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px 16px;
+  border: 2px solid #F5EDE5;
+  margin-bottom: 10px;
+}
+
+.order-card-hd {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.order-card-id { font-weight: 800; font-size: 0.82rem; color: var(--purple); }
+.order-card-time { font-size: 0.68rem; color: var(--sub); }
+
+.order-card-items {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 8px;
+}
+.order-card-item {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: #F8F8F0;
+  color: #8B7355;
+  font-weight: 500;
+}
+
+.order-card-ft {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 8px;
+  border-top: 1px solid #F5EDE5;
+}
+.order-card-method { font-size: 0.72rem; color: var(--sub); }
+.order-card-total { font-size: 0.95rem; font-weight: 800; color: var(--pink); }
 
 /* stock badge on veg cards */
 .veg-stock-low {
@@ -1288,7 +1590,10 @@ body {
   <div class="cart-list" id="cartList"></div>
   <div class="cart-footer" id="cartFooter" style="display:none">
     <div class="cart-total">合计 <span id="cartTotalPrice">¥0</span></div>
-    <button class="cart-clear" onclick="clearCart()">🗑 清空</button>
+    <div class="cart-footer-btns">
+      <button class="cart-clear" onclick="clearCart()">🗑 清空</button>
+      <button class="cart-checkout" onclick="openCheckout()">💳 去结算</button>
+    </div>
   </div>
   <div class="empty" id="cartEmpty">
     <span class="empty-icon">🛒</span>
@@ -1331,6 +1636,72 @@ body {
   </div>
 </div>
 
+<!-- Payment Modal -->
+<div class="pay-overlay" id="payOverlay" style="display:none">
+  <div class="pay-modal" onclick="event.stopPropagation()">
+    <!-- step 1: order summary -->
+    <div class="pay-step" id="payStep1">
+      <div class="pay-header">
+        <span class="pay-back" onclick="closePayment()">✕</span>
+        <span class="pay-title">确认订单</span>
+        <span style="width:24px"></span>
+      </div>
+      <div class="pay-addr">
+        <div class="pay-addr-icon">📍</div>
+        <div class="pay-addr-text">自提 / 当面交易</div>
+      </div>
+      <div class="pay-items" id="payItems"></div>
+      <div class="pay-summary">
+        <div class="pay-row"><span>商品合计</span><span id="paySubtotal">¥0</span></div>
+        <div class="pay-row"><span>配送费</span><span style="color:var(--green)">免运费</span></div>
+        <div class="pay-row pay-total-row"><span>应付总额</span><span id="payTotal">¥0</span></div>
+      </div>
+      <div class="pay-methods">
+        <div class="pay-method-title">选择支付方式</div>
+        <label class="pay-method selected" id="payMethodWx">
+          <input type="radio" name="payMethod" value="wechat" checked onchange="selectPayMethod('wechat')">
+          <span class="pay-method-icon">💚</span>
+          <span class="pay-method-name">微信支付</span>
+          <span class="pay-method-check">✓</span>
+        </label>
+        <label class="pay-method" id="payMethodAli">
+          <input type="radio" name="payMethod" value="alipay" onchange="selectPayMethod('alipay')">
+          <span class="pay-method-icon">💙</span>
+          <span class="pay-method-name">支付宝</span>
+          <span class="pay-method-check">✓</span>
+        </label>
+        <label class="pay-method" id="payMethodCash">
+          <input type="radio" name="payMethod" value="cash" onchange="selectPayMethod('cash')">
+          <span class="pay-method-icon">💵</span>
+          <span class="pay-method-name">现金支付</span>
+          <span class="pay-method-check">✓</span>
+        </label>
+      </div>
+      <button class="pay-submit" onclick="processPayment()">确认支付 <span id="payTotalBtn">¥0</span></button>
+    </div>
+
+    <!-- step 2: processing -->
+    <div class="pay-step" id="payStep2" style="display:none">
+      <div class="pay-processing">
+        <div class="pay-spinner"></div>
+        <div class="pay-processing-text" id="payProcessingText">正在支付...</div>
+      </div>
+    </div>
+
+    <!-- step 3: success -->
+    <div class="pay-step" id="payStep3" style="display:none">
+      <div class="pay-success">
+        <div class="pay-success-icon">✅</div>
+        <div class="pay-success-title">支付成功！</div>
+        <div class="pay-success-amount" id="paySuccessAmount"></div>
+        <div class="pay-success-order" id="paySuccessOrder"></div>
+        <button class="pay-done-btn" onclick="closePayment()">完成</button>
+        <button class="pay-view-btn" onclick="closePayment();switchTab('cart')">返回购物车</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Admin Password Modal -->
 <div class="admin-pwd-overlay" id="adminPwdOverlay" style="display:none">
   <div class="admin-pwd-box" onclick="event.stopPropagation()">
@@ -1353,6 +1724,8 @@ body {
   <div class="admin-stats" id="adminStats"></div>
   <div class="admin-cat-tabs" id="adminCatTabs"></div>
   <div class="admin-inventory" id="adminInventory"></div>
+  <div class="admin-section-title">📋 订单记录</div>
+  <div class="admin-orders" id="adminOrderList"></div>
 </div>
 
 <!-- Bottom Nav -->
@@ -2031,6 +2404,130 @@ function closeConfirm() {
   document.getElementById('confirmOverlay').style.display = 'none';
 }
 
+// ============ PAYMENT SYSTEM ============
+let selectedPayMethod = 'wechat';
+let currentOrderTotal = 0;
+let orders = JSON.parse(localStorage.getItem('grocery_orders') || '[]');
+
+function openCheckout() {
+  const items = Object.entries(cart).filter(([,q]) => q > 0);
+  if (items.length === 0) { showToast('🛒 购物车是空的'); return; }
+
+  const total = items.reduce((sum, [id, qty]) => {
+    const v = vegetables.find(vg => vg.id === id);
+    return sum + (v ? v.price * qty : 0);
+  }, 0);
+  currentOrderTotal = total;
+
+  // render order items
+  document.getElementById('payItems').innerHTML = items.map(([id, qty]) => {
+    const v = vegetables.find(vg => vg.id === id);
+    if (!v) return '';
+    return '<div class="pay-item">' +
+      '<span class="pay-item-emoji">' + v.emoji + '</span>' +
+      '<div class="pay-item-info"><div class="pay-item-name">' + v.name + '</div>' +
+      '<div class="pay-item-qty">x' + qty + '</div></div>' +
+      '<span class="pay-item-price">¥' + (v.price * qty).toFixed(1) + '</span></div>';
+  }).join('');
+
+  document.getElementById('paySubtotal').textContent = '¥' + total.toFixed(1);
+  document.getElementById('payTotal').textContent = '¥' + total.toFixed(1);
+  document.getElementById('payTotalBtn').textContent = '¥' + total.toFixed(1);
+
+  // reset steps
+  document.getElementById('payStep1').style.display = 'block';
+  document.getElementById('payStep2').style.display = 'none';
+  document.getElementById('payStep3').style.display = 'none';
+  selectedPayMethod = 'wechat';
+  document.querySelectorAll('.pay-method').forEach(el => el.classList.remove('selected'));
+  document.getElementById('payMethodWx').classList.add('selected');
+  document.querySelector('input[name="payMethod"][value="wechat"]').checked = true;
+
+  document.getElementById('payOverlay').style.display = 'flex';
+}
+
+function selectPayMethod(method) {
+  selectedPayMethod = method;
+  document.querySelectorAll('.pay-method').forEach(el => el.classList.remove('selected'));
+  document.getElementById(method === 'wechat' ? 'payMethodWx' : method === 'alipay' ? 'payMethodAli' : 'payMethodCash').classList.add('selected');
+}
+
+function processPayment() {
+  // show processing
+  document.getElementById('payStep1').style.display = 'none';
+  document.getElementById('payStep2').style.display = 'block';
+  const methodNames = { wechat: '微信支付', alipay: '支付宝', cash: '现金支付' };
+  document.getElementById('payProcessingText').textContent = '正在通过' + methodNames[selectedPayMethod] + '支付...';
+
+  // simulate payment processing
+  setTimeout(() => {
+    completePayment();
+  }, 1500 + Math.random() * 1000);
+}
+
+function completePayment() {
+  document.getElementById('payStep2').style.display = 'none';
+  document.getElementById('payStep3').style.display = 'block';
+
+  document.getElementById('paySuccessAmount').textContent = '¥' + currentOrderTotal.toFixed(1);
+
+  // generate order
+  const orderId = 'ORD' + Date.now().toString(36).toUpperCase();
+  document.getElementById('paySuccessOrder').textContent = '订单号: ' + orderId;
+
+  const items = Object.entries(cart).filter(([,q]) => q > 0).map(([id, qty]) => {
+    const v = vegetables.find(vg => vg.id === id);
+    return { name: v ? v.name : id, price: v ? v.price : 0, qty: qty };
+  });
+
+  // save order
+  orders.unshift({
+    id: orderId,
+    items: items,
+    total: currentOrderTotal,
+    method: selectedPayMethod,
+    time: new Date().toLocaleString('zh-CN')
+  });
+  if (orders.length > 50) orders = orders.slice(0, 50);
+  localStorage.setItem('grocery_orders', JSON.stringify(orders));
+
+  // clear cart
+  cart = {};
+  renderVegGrid();
+  updateBadges();
+  renderCart();
+}
+
+function closePayment() {
+  document.getElementById('payOverlay').style.display = 'none';
+}
+
+// ============ ORDER HISTORY (admin) ============
+function renderOrderHistory() {
+  const container = document.getElementById('adminOrderList');
+  if (!container) return;
+  if (orders.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:30px;color:var(--sub)">暂无订单记录</div>';
+    return;
+  }
+  container.innerHTML = orders.map(o => {
+    const methodNames = { wechat: '微信', alipay: '支付宝', cash: '现金' };
+    return '<div class="order-card">' +
+      '<div class="order-card-hd">' +
+        '<span class="order-card-id">' + o.id + '</span>' +
+        '<span class="order-card-time">' + o.time + '</span>' +
+      '</div>' +
+      '<div class="order-card-items">' +
+        o.items.map(i => '<span class="order-card-item">' + i.name + ' x' + i.qty + '</span>').join('') +
+      '</div>' +
+      '<div class="order-card-ft">' +
+        '<span class="order-card-method">' + methodNames[o.method] + '</span>' +
+        '<span class="order-card-total">¥' + o.total.toFixed(1) + '</span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
 function showToast(msg) {
   const toast = document.getElementById('randomToast');
   toast.textContent = msg;
@@ -2131,6 +2628,7 @@ function showAdminPage() {
   updateAdminStats();
   renderAdminFilters();
   renderAdminInventory();
+  renderOrderHistory();
 }
 
 function exitAdmin() {
